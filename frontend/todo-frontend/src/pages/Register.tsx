@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 export default function Register() {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    // TODO: chamar API de registro
   };
 
   return (
