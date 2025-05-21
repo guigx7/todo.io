@@ -1,6 +1,6 @@
 import { type FormEvent, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { login, type LoginRequest } from "../api/auth";
+import { login as apiLogin, type LoginRequest } from "../api/auth";
 import { AuthContext } from "../contexts/AuthContext";
 
 export default function Login() {
@@ -16,9 +16,9 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      const token = await login(form);
-      doLogin(token);
-      navigate("/tasks");
+      const token = await apiLogin(form); // faz POST /api/auth/login
+      doLogin(token); // salva token no context e axios.headers
+      navigate("/tasks"); // redireciona agora!
     } catch {
       setError("Login failed");
     }
@@ -37,7 +37,6 @@ export default function Login() {
             onChange={handleChange}
             type="email"
             className="border border-gray-300 p-2 mb-4 rounded focus:outline-none focus:border-blue-500"
-            placeholder="you@example.com"
             required
           />
           <label className="mb-2 text-gray-700">Password</label>
@@ -47,7 +46,6 @@ export default function Login() {
             onChange={handleChange}
             type="password"
             className="border border-gray-300 p-2 mb-6 rounded focus:outline-none focus:border-blue-500"
-            placeholder="********"
             required
           />
           <button
