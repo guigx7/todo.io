@@ -1,4 +1,4 @@
-import { type FormEvent, useState, useContext } from "react";
+import { type FormEvent, useState, useContext, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as apiLogin, type LoginRequest } from "../api/auth";
 import { AuthContext } from "../contexts/AuthContext";
@@ -7,7 +7,13 @@ export default function Login() {
   const [form, setForm] = useState<LoginRequest>({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login: doLogin } = useContext(AuthContext);
+  const { login: doLogin, token } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (token) {
+      navigate("/tasks");
+    }
+  }, [token, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -15,12 +21,16 @@ export default function Login() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
     try {
-      const token = await apiLogin(form); // faz POST /api/auth/login
-      doLogin(token); // salva token no context e axios.headers
-      navigate("/tasks"); // redireciona agora!
-    } catch {
+      const newToken = await apiLogin(form);
+      doLogin(newToken);
+      console.log("ok");
+
+      // não faça navigate aqui
+    } catch (err) {
       setError("Login failed");
+      console.log("error");
     }
   };
 
@@ -37,6 +47,7 @@ export default function Login() {
             onChange={handleChange}
             type="email"
             className="border border-gray-300 p-2 mb-4 rounded focus:outline-none focus:border-blue-500"
+            placeholder="you@example.com"
             required
           />
           <label className="mb-2 text-gray-700">Password</label>
@@ -46,6 +57,7 @@ export default function Login() {
             onChange={handleChange}
             type="password"
             className="border border-gray-300 p-2 mb-6 rounded focus:outline-none focus:border-blue-500"
+            placeholder="********"
             required
           />
           <button
