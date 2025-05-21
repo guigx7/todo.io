@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+// frontend/src/pages/Tasks.tsx
+import { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { getTasks, type TaskDto, deleteTask } from "../api/tasks";
 import { TaskForm } from "../components/TaskForm";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<TaskDto[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     getTasks()
@@ -22,8 +27,23 @@ export default function Tasks() {
     setTasks([newTask, ...tasks]);
   };
 
+  const handleLogout = () => {
+    logout(); // limpa token do contexto e localStorage
+    navigate("/login"); // redireciona para tela de login
+  };
+
   return (
     <div className="p-6">
+      {/* Logout button */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 hover:bg-red-600 text-white font-semibold py-1 px-3 rounded"
+        >
+          Logout
+        </button>
+      </div>
+
       <h2 className="text-2xl font-semibold mb-4">My Tasks</h2>
       <TaskForm onCreated={handleCreated} />
       {error && <p className="mb-4 text-red-600">{error}</p>}
