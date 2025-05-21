@@ -11,8 +11,8 @@ export function HealtCheck() {
   }, []);
 
   return (
-    <div className="bg-cyan-400">
-      <p>
+    <div className="mt-4 p-4 shadow rounded-md max-w-sm mx-auto">
+      <p className="text-center">
         Status da API: <strong>{status}</strong>
       </p>
     </div>
