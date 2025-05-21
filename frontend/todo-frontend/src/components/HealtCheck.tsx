@@ -11,7 +11,7 @@ export function HealtCheck() {
   }, []);
 
   return (
-    <div>
+    <div className="bg-cyan-400">
       <p>
         Status da API: <strong>{status}</strong>
       </p>
