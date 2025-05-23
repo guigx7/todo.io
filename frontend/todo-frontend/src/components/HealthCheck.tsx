@@ -1,4 +1,3 @@
-// frontend/src/components/HealthCheck.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -8,13 +7,24 @@ export function HealthCheck() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("HealthCheck: iniciando fetch");
     axios
-      .get<{ status: string; components?: any }>("/api/health")
+      .get("/api/health")
       .then((res) => {
-        setStatus(res.data.status);
-        setDetails(res.data.components ?? null);
+        console.log("HealthCheck: dados recebidos", res.data);
+
+        if (res.data && typeof res.data === "object" && "status" in res.data) {
+          setStatus(res.data.status);
+          setDetails(res.data.details ?? (res.data.components as any) ?? null);
+        }
+        // Se veio simplesmente uma string
+        else if (typeof res.data === "string") {
+          setStatus(res.data);
+          setDetails(null);
+        }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error("HealthCheck: erro no fetch", err);
         setError("Could not fetch health");
       });
   }, []);
@@ -22,9 +32,10 @@ export function HealthCheck() {
   if (error) {
     return <p className="text-red-600">{error}</p>;
   }
-  if (!status) {
+  if (status === null) {
     return <p>Loading...</p>;
   }
+
   return (
     <div className="p-6">
       <h2 className="text-2xl font-semibold mb-4">Health Check</h2>
