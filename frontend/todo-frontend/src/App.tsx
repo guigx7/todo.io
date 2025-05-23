@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { HealtCheck } from "./components/HealtCheck";
+import { HealtCheck } from "./components/HealthCheck";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
